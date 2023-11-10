@@ -89,3 +89,9 @@ $internalUcClient->setTtl('123131');
 $internalUcClient = new \Package\Uc\InternalClient(LoginType::EMAIL, $dbConn, $cacheConn);
 $internalUcClient->setAlgo('HS384');
 ```
+
+
+## 扩展维护
+
+1. 扩展自有账户登录方式， 在`src/Impl`下新建`XxxxLogin`, 实现接口`\Package\Uc\Interf\InternalLogin`
+2. 扩展第三方登录方式， 在`src/Impl`下新建`XxxxLogin`, 实现接口`\Package\Uc\Interf\ThirdLogin`
