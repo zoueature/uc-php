@@ -12,11 +12,17 @@
 ### Install
 * 在`composer.json`上加上仓库配置
 ```
+    // 增加仓库
     "repositories": {
         "package/uc": {
             "type": "git",
             "url": "git@16.163.83.112:package/uc.git"
         }
+    }
+    
+    // 增加依赖
+    "require": {
+        "package/uc": "dev-master"
     }
 ```
 * 安装依赖
