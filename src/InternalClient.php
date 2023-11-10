@@ -5,17 +5,23 @@
 namespace Package\Uc;
 
 use Exception;
+use Package\Uc\Component\Convert;
+use Package\Uc\Component\Jwt;
 use Package\Uc\DataStruct\UserInfo;
+use Package\Uc\DataStruct\UserInfoWithJwt;
+use Package\Uc\Exception\TokenExpireException;
 use Package\Uc\Impl\EmailLogin;
 use Package\Uc\Impl\MobileLogin;
 use Package\Uc\Interf\InternalLogin;
 use think\db\Connection;
+use think\db\ConnectionInterface;
 
 
 class InternalClient
 {
+    use Jwt, Convert;
 
-    /** @var Connection $dbConn */
+    /** @var ConnectionInterface $dbConn */
     private $dbConn;
 
     private $cacheConn;
@@ -26,7 +32,7 @@ class InternalClient
     /**
      * @throws Exception
      */
-    public function __construct(string $loginType, Connection $conn, $cacheConn)
+    public function __construct(string $loginType, ConnectionInterface $conn, $cacheConn)
     {
         $this->dbConn = $conn;
         $this->cacheConn = $cacheConn;
@@ -66,9 +72,20 @@ class InternalClient
     }
 
     // login 用户登录
-    public function login(string $identify, string $password) :UserInfo
+    public function login(string $identify, string $password) :UserInfoWithJwt
     {
-        return $this->loginClient->login($identify, $password);
+        $userInfo = $this->loginClient->login($identify, $password);
+        $jwt = $this->encodeJwt($userInfo);
+        return new UserInfoWithJwt($userInfo, $jwt);
+    }
+
+    /**
+     * @throws Exception|TokenExpireException
+     */
+    public function verifyToken(string $jwtToken) :UserInfo
+    {
+        $info = $this->decodeJwt($jwtToken);
+        return $this->objectToUserInfo($info);
     }
 
     // login 用户登录

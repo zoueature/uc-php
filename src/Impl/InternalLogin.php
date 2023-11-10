@@ -5,6 +5,7 @@
 namespace Package\Uc\Impl;
 
 
+use Package\Uc\Component\Convert;
 use Package\Uc\Component\PasswordEncrypt;
 use Package\Uc\Constant;
 use Package\Uc\DataStruct\UserInfo;
@@ -13,16 +14,16 @@ use Package\Uc\Exception\PasswordNotMatchException;
 use Package\Uc\Exception\UserExistsException;
 use Package\Uc\Exception\UserNotFoundException;
 use Package\Uc\Exception\VerifyCodeNotMatchException;
-use think\db\Connection;
+use think\db\ConnectionInterface;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 
 class InternalLogin
 {
-    use PasswordEncrypt;
+    use PasswordEncrypt, Convert;
 
-    /** @var Connection $dbConn */
+    /** @var ConnectionInterface $dbConn */
     protected $dbConn;
 
     /** @var VerifyCodeImpl $verifyCodeCli */
@@ -31,7 +32,7 @@ class InternalLogin
     /** @var string $loginType */
     protected $loginType;
 
-    public function __construct(Connection $connection, $cacheConn)
+    public function __construct(ConnectionInterface $connection, $cacheConn)
     {
         $this->dbConn = $connection;
         $this->verifyCodeCli = new VerifyCodeImpl($cacheConn);
@@ -56,8 +57,7 @@ class InternalLogin
                 ->where('login_type', '=', $this->loginType)
                 ->where('identify', '=', $identify)
                 ->where('active', '=', Constant::DATA_STATUS_NORMAL)
-                ->find()
-                ->toArray();
+                ->findOrFail();
         } catch (DataNotFoundException|ModelNotFoundException $e) {
             throw new UserNotFoundException();
         }
@@ -77,8 +77,7 @@ class InternalLogin
             $user = $this->dbConn->newQuery()->table(Constant::getUserDbTable())
                 ->where('username', '=', $username)
                 ->where('active', '=', Constant::DATA_STATUS_NORMAL)
-                ->find()
-                ->toArray();
+                ->findOrFail();
         } catch (DataNotFoundException|ModelNotFoundException $e) {
             throw new UserNotFoundException();
         }
@@ -99,24 +98,7 @@ class InternalLogin
         if ($user['password'] != $encryptPassword) {
             throw new PasswordNotMatchException();
         }
-        return $this->generateUserInfoByUser($user);
-    }
-
-
-    /**
-     * 数据结构转换
-     * @param array $user
-     * @return UserInfo
-     */
-    private function generateUserInfoByUser(array $user) :UserInfo
-    {
-        $userInfo = new UserInfo();
-        $userInfo->id = $user['id'];
-        $userInfo->loginType = $userInfo['login_type'];
-        $userInfo->name = $user['nickname'];
-        $userInfo->avatar = $user['avatar'];
-        $userInfo->gender = $user['gender'];
-        return $userInfo;
+        return $this->arrayToUserInfo($user);
     }
 
     /**
@@ -136,7 +118,7 @@ class InternalLogin
         if ($user['password'] != $encryptPassword) {
             throw new PasswordNotMatchException();
         }
-        return $this->generateUserInfoByUser($user);
+        return $this->arrayToUserInfo($user);
     }
 
     /**
@@ -151,12 +133,15 @@ class InternalLogin
      */
     public function register(string $identify, string $password, string $verifyCode, array $userInfo): UserInfo
     {
-        if ($this->verifyCodeCli->verifyCode($identify, VerifyCodeImpl::VERIFY_CODE_TYPE_REGISTER, $verifyCode)) {
+        if (!$this->verifyCodeCli->verifyCode($identify, VerifyCodeImpl::VERIFY_CODE_TYPE_REGISTER, $verifyCode)) {
             throw new VerifyCodeNotMatchException();
         }
         try {
             // 检查当前标识是否已经被注册
-            $this->getUserByIdentify($identify);
+            $user = $this->getUserByIdentify($identify);
+            if (!empty($user)) {
+                throw new UserExistsException();
+            }
             // 没有设置用户名则用标识替代
             $username = $userInfo['username'] ?? '';
             if (empty($username)) {
@@ -196,7 +181,7 @@ class InternalLogin
             throw new DbException('create user error');
         }
         $insertUserData['id'] = $id;
-        return $this->generateUserInfoByUser($insertUserData);
+        return $this->arrayToUserInfo($insertUserData);
     }
 
     /**
@@ -210,7 +195,7 @@ class InternalLogin
      */
     public function changePassword(string $identify, string $verifyCode, string $password)
     {
-        if ($this->verifyCodeCli->verifyCode($identify, VerifyCodeImpl::VERIFY_CODE_TYPE_FORGOT_PASSWORD, $verifyCode)) {
+        if (!$this->verifyCodeCli->verifyCode($identify, VerifyCodeImpl::VERIFY_CODE_TYPE_FORGOT_PASSWORD, $verifyCode)) {
             throw new VerifyCodeNotMatchException();
         }
         $user = $this->getUserByIdentify($identify);

@@ -14,6 +14,7 @@
         }
     ],
     "require": {
-        "topthink/think-orm": "^2.0"
+        "topthink/think-orm": "^2.0",
+        "firebase/php-jwt": "^6.9"
     }
 }

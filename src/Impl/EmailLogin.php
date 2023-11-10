@@ -19,6 +19,7 @@ class EmailLogin extends \Package\Uc\Impl\InternalLogin implements InternalLogin
     {
         $verifyCode = $this->verifyCodeCli->generateVerifyCode($identify, $codeType);
         // TODO 发送邮件
+        echo $verifyCode;
     }
 
 
