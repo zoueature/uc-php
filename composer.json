@@ -1,0 +1,19 @@
+{
+    "name": "package/uc",
+    "description": "A simple package for user login module",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Package\\Uc\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "crazyman",
+            "email": "me@crazyman.com"
+        }
+    ],
+    "require": {
+        "topthink/think-orm": "^2.0"
+    }
+}
