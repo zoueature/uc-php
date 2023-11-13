@@ -14,4 +14,19 @@ CREATE TABLE `user` (
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE `uk_username` (`username`),
     UNIQUE `uk_identify` (`identify`)
-) ENGINE=InnoDB AUTO_INCREMENT=100000 DEFAULT CHARSET=utf8mb4 COMMENT='用户表'
+) ENGINE=InnoDB AUTO_INCREMENT=100000 DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+
+
+CREATE TABLE `oauth_user` (
+    `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `user_id` varchar(32) NOT NULL DEFAULT '' COMMENT '第三方用户id',
+    `login_type` varchar(16) NOT NULL DEFAULT '' COMMENT '登录类型',
+    `bind_user_id` int NOT NULL DEFAULT 0 COMMENT '绑定的内部用户id(user.id)',
+    `active` tinyint NOT NULL DEFAULT 1 COMMENT '1正常， 0删除',
+    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE `uk_identify` (`user_id`, `login_type`),
+    INDEX `idx_bind_user` (`bind_user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100000 DEFAULT CHARSET=utf8mb4 COMMENT='Oauth用户表';
+

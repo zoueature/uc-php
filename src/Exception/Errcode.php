@@ -13,4 +13,5 @@ class Errcode
     const ERR_USER_ALREADY_EXISTS = 40004;
     const ERR_PASSWORD_EQUAL_OLD = 40005;
     const ERR_TOKEN_EXPIRE = 40006;
+    const ERR_UNDEFINED_LOGIN_TYPE = 40007;
 }

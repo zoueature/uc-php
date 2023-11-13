@@ -7,14 +7,16 @@ namespace Package\Uc\Impl;
 
 use Package\Uc\Component\Convert;
 use Package\Uc\Component\PasswordEncrypt;
-use Package\Uc\Constant;
+use Package\Uc\Config\Config;
+use Package\Uc\Config\ConfigOption;
 use Package\Uc\DataStruct\UserInfo;
 use Package\Uc\Exception\PasswordEqualOldException;
 use Package\Uc\Exception\PasswordNotMatchException;
+use Package\Uc\Exception\UcException;
 use Package\Uc\Exception\UserExistsException;
 use Package\Uc\Exception\UserNotFoundException;
 use Package\Uc\Exception\VerifyCodeNotMatchException;
-use think\db\ConnectionInterface;
+use Package\Uc\Model\User;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -23,18 +25,18 @@ class InternalLogin
 {
     use PasswordEncrypt, Convert;
 
-    /** @var ConnectionInterface $dbConn */
-    protected $dbConn;
+    protected User $userModel;
 
     /** @var VerifyCodeImpl $verifyCodeCli */
-    protected $verifyCodeCli;
+    protected VerifyCodeImpl $verifyCodeCli;
 
     /** @var string $loginType */
-    protected $loginType;
+    protected string $loginType;
 
-    public function __construct(ConnectionInterface $connection, $cacheConn)
+    public function __construct($cacheConn)
     {
-        $this->dbConn = $connection;
+        $class               = Config::getConfig(ConfigOption::USER_MODEL_CLASS);
+        $this->userModel     = new $class();
         $this->verifyCodeCli = new VerifyCodeImpl($cacheConn);
     }
 
@@ -46,18 +48,13 @@ class InternalLogin
     /**
      * 根据标识获取用户信息
      * @param string $identify
-     * @return array
-     * @throws DbException
+     * @return User
      * @throws UserNotFoundException
      */
-    protected function getUserByIdentify(string $identify) :array
+    protected function getUserByIdentify(string $identify): User
     {
         try {
-            $user = $this->dbConn->newQuery()->table(Constant::getUserDbTable())
-                ->where('login_type', '=', $this->loginType)
-                ->where('identify', '=', $identify)
-                ->where('active', '=', Constant::DATA_STATUS_NORMAL)
-                ->findOrFail();
+            $user = $this->userModel->getUserByIdentify($this->loginType, $identify);
         } catch (DataNotFoundException|ModelNotFoundException $e) {
             throw new UserNotFoundException();
         }
@@ -67,17 +64,13 @@ class InternalLogin
     /**
      * 根据用户名获取用户信息
      * @param string $username
-     * @return array
-     * @throws DbException
+     * @return User
      * @throws UserNotFoundException
      */
-    protected function getUserByUsername(string $username) :array
+    protected function getUserByUsername(string $username): User
     {
         try {
-            $user = $this->dbConn->newQuery()->table(Constant::getUserDbTable())
-                ->where('username', '=', $username)
-                ->where('active', '=', Constant::DATA_STATUS_NORMAL)
-                ->findOrFail();
+            $user = $this->userModel->getUserByUsername($username);
         } catch (DataNotFoundException|ModelNotFoundException $e) {
             throw new UserNotFoundException();
         }
@@ -89,16 +82,16 @@ class InternalLogin
      * @param string $identify
      * @param string $password
      * @return UserInfo
-     * @throws DbException|PasswordNotMatchException|UserNotFoundException
+     * @throws PasswordNotMatchException|UserNotFoundException
      */
-    public function login(string $identify, string $password) :UserInfo
+    public function login(string $identify, string $password): UserInfo
     {
         $encryptPassword = $this->encryptPassword($password);
-        $user = $this->getUserByIdentify($identify);
-        if ($user['password'] != $encryptPassword) {
+        $user            = $this->getUserByIdentify($identify);
+        if ($user->password != $encryptPassword) {
             throw new PasswordNotMatchException();
         }
-        return $this->arrayToUserInfo($user);
+        return $user->toUserInfo();
     }
 
     /**
@@ -106,7 +99,6 @@ class InternalLogin
      * @param string $username
      * @param string $password
      * @return UserInfo
-     * @throws DbException
      * @throws PasswordNotMatchException
      * @throws UserNotFoundException
      */
@@ -115,10 +107,10 @@ class InternalLogin
         $encryptPassword = $this->encryptPassword($password);
 
         $user = $this->getUserByUsername($username);
-        if ($user['password'] != $encryptPassword) {
+        if ($user->password != $encryptPassword) {
             throw new PasswordNotMatchException();
         }
-        return $this->arrayToUserInfo($user);
+        return $user->toUserInfo();
     }
 
     /**
@@ -127,28 +119,24 @@ class InternalLogin
      * @param string $verifyCode
      * @param array $userInfo
      * @return UserInfo
-     * @throws DbException
      * @throws UserExistsException
-     * @throws VerifyCodeNotMatchException
+     * @throws VerifyCodeNotMatchException|UcException
      */
     public function register(string $identify, string $password, string $verifyCode, array $userInfo): UserInfo
     {
         if (!$this->verifyCodeCli->verifyCode($identify, VerifyCodeImpl::VERIFY_CODE_TYPE_REGISTER, $verifyCode)) {
             throw new VerifyCodeNotMatchException();
         }
+        // 没有设置用户名则用标识替代
+        $userInfo['username'] = $userInfo['username'] ?? $identify;
         try {
             // 检查当前标识是否已经被注册
             $user = $this->getUserByIdentify($identify);
             if (!empty($user)) {
                 throw new UserExistsException();
             }
-            // 没有设置用户名则用标识替代
-            $username = $userInfo['username'] ?? '';
-            if (empty($username)) {
-                $username = $identify;
-            }
             // 检查用户名是否被注册
-            $this->getUserByUsername($username);
+            $this->getUserByUsername($userInfo['username']);
             throw new UserExistsException();
         } catch (UserNotFoundException $exception) {
             return $this->createUser($identify, $password, $userInfo);
@@ -161,27 +149,23 @@ class InternalLogin
      * @param string $password
      * @param array $userInfo
      * @return UserInfo
-     * @throws DbException
+     * @throws UcException
      */
-    private function createUser(string $identify, string $password, array $userInfo) :UserInfo
+    private function createUser(string $identify, string $password, array $userInfo): UserInfo
     {
-        $insertUserData = [
-            'login_type' => $this->loginType,
-            'identify' => $identify,
-            'password' => $this->encryptPassword($password),
-            'username' => $userInfo['username'] ?? '',
-            'nickname' => $userInfo['nickname'] ?? '',
-            'avatar' => $userInfo['avatar'] ?? '',
-            'gender' => $userInfo['gender'] ?? 0,
-        ];
-        $id = $this->dbConn->newQuery()
-            ->table(Constant::getUserDbTable())
-            ->insertGetId($insertUserData);
-        if (empty($id)) {
-            throw new DbException('create user error');
+        $model             = clone $this->userModel;
+        $model->login_type = $this->loginType;
+        $model->identify   = $identify;
+        $model->password   = $this->encryptPassword($password);
+        $model->username   = $userInfo['username'] ?? '';
+        $model->nickname   = $userInfo['nickname'] ?? '';
+        $model->avatar     = $userInfo['avatar'] ?? '';
+        $model->gender     = $userInfo['gender'] ?? 0;
+        $ok = $model->save();
+        if (!$ok) {
+            throw new UcException('create user error');
         }
-        $insertUserData['id'] = $id;
-        return $this->arrayToUserInfo($insertUserData);
+        return $model->toUserInfo();
     }
 
     /**
@@ -193,32 +177,18 @@ class InternalLogin
      * @throws VerifyCodeNotMatchException|UserNotFoundException|DbException
      * @throws PasswordEqualOldException
      */
-    public function changePassword(string $identify, string $verifyCode, string $password)
+    public function changePassword(string $identify, string $verifyCode, string $password): bool
     {
         if (!$this->verifyCodeCli->verifyCode($identify, VerifyCodeImpl::VERIFY_CODE_TYPE_FORGOT_PASSWORD, $verifyCode)) {
             throw new VerifyCodeNotMatchException();
         }
-        $user = $this->getUserByIdentify($identify);
+        $user            = $this->getUserByIdentify($identify);
         $encryptPassword = $this->encryptPassword($password);
-        if ($encryptPassword == $user['password']) {
+        if ($encryptPassword == $user->password) {
             throw new PasswordEqualOldException();
         }
-        $this->updatePasswordByID($user['id'], $encryptPassword);
-    }
-
-    /**
-     * 更新密码到数据库
-     * @param int $id
-     * @param string $newPassword
-     * @return int
-     * @throws DbException
-     */
-    private function updatePasswordByID(int $id, string $newPassword): int
-    {
-        return $this->dbConn->newQuery()
-            ->table(Constant::getUserDbTable())
-            ->where('id', '=', $id)
-            ->update(['password' => $newPassword]);
+        $user->password = $encryptPassword;
+        return $user->save();
     }
 
     /**
@@ -226,22 +196,21 @@ class InternalLogin
      * @param string $identify
      * @param string $oldPassword
      * @param string $password
-     * @return void
-     * @throws DbException
+     * @return bool
      * @throws UserNotFoundException|PasswordEqualOldException|PasswordNotMatchException
      */
-    public function changePasswordByOldPassword(string $identify, string $oldPassword, string $password)
+    public function changePasswordByOldPassword(string $identify, string $oldPassword, string $password) :bool
     {
-        $user = $this->getUserByIdentify($identify);
+        $user               = $this->getUserByIdentify($identify);
         $encryptOldPassword = $this->encryptPassword($oldPassword);
         $encryptNewPassword = $this->encryptPassword($password);
-        if ($user['password'] != $encryptOldPassword) {
+        if ($user->password != $encryptOldPassword) {
             throw new PasswordNotMatchException();
         }
         if ($encryptOldPassword == $encryptNewPassword) {
             throw new PasswordEqualOldException();
         }
-        $this->updatePasswordByID($user['id'], $encryptNewPassword);
-
+        $user->password = $encryptNewPassword;
+        return $user->save();
     }
 }

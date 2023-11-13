@@ -8,7 +8,7 @@ namespace Package\Uc\Exception;
 
 use Throwable;
 
-class PasswordEqualOldException extends \Exception
+class PasswordEqualOldException extends UcException
 {
     public function __construct($message = "The new password is equal to old one", $code = Errcode::ERR_PASSWORD_EQUAL_OLD, Throwable $previous = null)
     {

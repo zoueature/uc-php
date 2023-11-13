@@ -2,17 +2,17 @@
 // Package\Uc\Login/MobileLogin
 
 
-namespace Package\Uc\Impl;
+namespace Package\Uc\Impl\Internal;
 
 
 use Exception;
+use Package\Uc\Common\LoginType;
 use Package\Uc\Interf\InternalLogin;
-use Package\Uc\LoginType;
 
 class MobileLogin extends \Package\Uc\Impl\InternalLogin implements InternalLogin
 {
 
-    protected $loginType = LoginType::MOBILE;
+    protected string $loginType = LoginType::MOBILE;
 
     /**
      * @throws Exception

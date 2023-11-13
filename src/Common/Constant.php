@@ -2,7 +2,7 @@
 // Package\Uc/Constant
 
 
-namespace Package\Uc;
+namespace Package\Uc\Common;
 
 
 class Constant

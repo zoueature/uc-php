@@ -8,7 +8,7 @@ namespace Package\Uc\Exception;
 
 use Throwable;
 
-class TokenExpireException extends \Exception
+class TokenExpireException extends UcException
 {
     public function __construct($message = "Jwt token expire", $code = Errcode::ERR_TOKEN_EXPIRE, Throwable $previous = null)
     {

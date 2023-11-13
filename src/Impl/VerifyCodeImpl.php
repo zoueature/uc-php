@@ -7,6 +7,7 @@ namespace Package\Uc\Impl;
 
 
 use Exception;
+use Package\Uc\Exception\UcException;
 
 class VerifyCodeImpl
 {
@@ -49,7 +50,7 @@ class VerifyCodeImpl
         }
         $cacheKeyTemplate = self::VERIFY_CODE_TYPE_CACHE_KEY_TEMPLATE[$verifyCodeType] ?? '';
         if (empty($cacheKeyTemplate)) {
-            throw new Exception("undefined verify code type");
+            throw new UcException("undefined verify code type");
         }
         $this->cacheConn->set(sprintf($cacheKeyTemplate, $identify), $code, self::VERIFY_CODE_TTL);
         return $code;
