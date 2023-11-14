@@ -8,12 +8,13 @@ namespace Package\Uc\Impl\Internal;
 use Package\Uc\Common\LoginType;
 use Package\Uc\Config\Config;
 use Package\Uc\Config\ConfigOption;
+use Package\Uc\Impl\InternalLoginImpl;
 use Package\Uc\Interf\InternalLogin;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Email;
 
-class EmailLogin extends \Package\Uc\Impl\InternalLogin implements InternalLogin
+class EmailLoginImpl extends InternalLoginImpl implements InternalLogin
 {
 
 

@@ -6,9 +6,10 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Package\Uc\DataStruct\OauthUserInfo;
 use Package\Uc\Exception\UcException;
-use Package\Uc\Impl\ThirdLogin;
+use Package\Uc\Impl\OauthLoginImpl;
+use Package\Uc\Interf\OauthLogin;
 
-class Google extends ThirdLogin implements \Package\Uc\Interf\ThirdLogin
+class Google extends OauthLoginImpl implements OauthLogin
 {
     const GET_USER_INFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 

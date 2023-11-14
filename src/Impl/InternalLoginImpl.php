@@ -17,11 +17,9 @@ use Package\Uc\Exception\UserExistsException;
 use Package\Uc\Exception\UserNotFoundException;
 use Package\Uc\Exception\VerifyCodeNotMatchException;
 use Package\Uc\Model\User;
-use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
 
-class InternalLogin
+class InternalLoginImpl
 {
     use PasswordEncrypt, Convert;
 

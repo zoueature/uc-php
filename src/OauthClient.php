@@ -16,16 +16,16 @@ use Package\Uc\Exception\LackDataException;
 use Package\Uc\Exception\UcException;
 use Package\Uc\Exception\UndefinedLoginTypeException;
 use Package\Uc\Exception\UserNotFoundException;
-use Package\Uc\Interf\ThirdLogin;
+use Package\Uc\Interf\OauthLogin;
 use Package\Uc\Model\OauthUser;
 use Package\Uc\Model\User;
 
-class ThirdClient
+class OauthClient
 {
 
     use Jwt;
 
-    private ThirdLogin $loginClient;
+    private OauthLogin $loginClient;
 
     private ThirdConfig $config;
 
@@ -49,10 +49,10 @@ class ThirdClient
     /**
      * 实例化第三方客户端
      * @param string $loginType
-     * @return ThirdLogin
+     * @return OauthLogin
      * @throws UndefinedLoginTypeException
      */
-    private function generateLoginClient(string $loginType): ThirdLogin
+    private function generateLoginClient(string $loginType): OauthLogin
     {
         $clientClass = LoginType::THIRD_LOGIN_TYPE[$loginType] ?? null;
         if (empty($clientClass)) {

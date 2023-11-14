@@ -7,7 +7,7 @@ namespace Package\Uc\Interf;
 
 use Package\Uc\DataStruct\OauthUserInfo;
 
-interface ThirdLogin
+interface OauthLogin
 {
     public function getLoginType(): string;
 

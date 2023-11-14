@@ -9,9 +9,10 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Package\Uc\Common\LoginType;
 use Package\Uc\Exception\UcException;
-use Package\Uc\Interf\ThirdLogin;
+use Package\Uc\Impl\OauthLoginImpl;
+use Package\Uc\Interf\OauthLogin;
 
-class Facebook extends \Package\Uc\Impl\ThirdLogin implements ThirdLogin
+class Facebook extends OauthLoginImpl implements OauthLogin
 {
     const GET_ACCESS_TOKEN_URL = 'https://graph.facebook.com/v18.0/oauth/access_token';
 

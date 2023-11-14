@@ -5,8 +5,8 @@
 namespace Package\Uc\Common;
 
 
-use Package\Uc\Impl\Internal\EmailLogin;
-use Package\Uc\Impl\Internal\MobileLogin;
+use Package\Uc\Impl\Internal\EmailLoginImpl;
+use Package\Uc\Impl\Internal\MobileLoginImpl;
 use Package\Uc\Impl\Oauth\Facebook;
 use Package\Uc\Impl\Oauth\Google;
 
@@ -20,8 +20,8 @@ class LoginType
     const TIKTOK   = 'tiktok';
 
     const INTERNAL_LOGIN_TYPE = [
-        self::EMAIL  => EmailLogin::class,
-        self::MOBILE => MobileLogin::class,
+        self::EMAIL  => EmailLoginImpl::class,
+        self::MOBILE => MobileLoginImpl::class,
     ];
 
     const THIRD_LOGIN_TYPE = [

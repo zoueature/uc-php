@@ -8,7 +8,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Package\Uc\Exception\UcException;
 
-class ThirdLogin
+class OauthLoginImpl
 {
     protected string $loginType;
 
