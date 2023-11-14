@@ -15,6 +15,9 @@ interface InternalLogin
     // sendSmsCode 发送验证码
     public function sendSmsCode(int $codeType, string $identify);
 
+    // checkIdentifyFormat 检查标识格式
+    public function checkIdentifyFormat(string $identify): bool;
+
     // register 注册用户
     public function register(string $identify, string $password, string $verifyCode, array $userInfo): UserInfo;
 
