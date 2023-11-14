@@ -13,7 +13,7 @@ interface InternalLogin
     public function getLoginType(): string;
 
     // sendSmsCode 发送验证码
-    public function sendSmsCode(int $codeType, string $identify);
+    public function sendSmsCode(int $codeType, string $identify): void;
 
     // checkIdentifyFormat 检查标识格式
     public function checkIdentifyFormat(string $identify): bool;
@@ -28,9 +28,9 @@ interface InternalLogin
     public function loginByUsername(string $username, string $password): UserInfo;
 
     // changePassword 忘记密码密码修改
-    public function changePassword(string $identify, string $verifyCode, string $password);
+    public function changePassword(string $identify, string $verifyCode, string $password): bool;
 
     // changePasswordByOldPassword 根据旧密码修改密码
-    public function changePasswordByOldPassword(string $identify, string $oldPassword, string $password);
+    public function changePasswordByOldPassword(string $identify, string $oldPassword, string $password): bool;
 
 }

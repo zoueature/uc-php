@@ -22,7 +22,7 @@ class EmailLoginImpl extends InternalLoginImpl implements InternalLogin
     protected string $loginType = LoginType::EMAIL;
 
 
-    public function sendSmsCode(int $codeType, string $identify)
+    public function sendSmsCode(int $codeType, string $identify): void
     {
         $verifyCode = $this->verifyCodeCli->generateVerifyCode($identify, $codeType);
         // TODO 发送邮件, 消息队列异步发送
