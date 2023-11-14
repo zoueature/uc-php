@@ -23,8 +23,6 @@ class InternalClient
 {
     use Jwt, Convert;
 
-    /** @var ConnectionInterface $dbConn */
-    private ConnectionInterface $dbConn;
 
     // cacheConn 为缓存连接, 不做类型限制， 实现以下方法即可
     // get(string key)
@@ -40,8 +38,7 @@ class InternalClient
      */
     public function __construct(string $loginType, $cacheConn)
     {
-//        $this->dbConn = $conn;
-        $this->cacheConn = $cacheConn;
+        $this->cacheConn   = $cacheConn;
         $this->loginClient = $this->getLoginClientByLoginType($loginType);
     }
 
@@ -50,7 +47,7 @@ class InternalClient
      * @return InternalLogin
      * @throws Exception
      */
-    private function getLoginClientByLoginType(string $loginType) :InternalLogin
+    private function getLoginClientByLoginType(string $loginType): InternalLogin
     {
         $clientClass = LoginType::INTERNAL_LOGIN_TYPE[$loginType] ?? null;
         if (empty($clientClass)) {
@@ -65,7 +62,8 @@ class InternalClient
      * @param string $identify
      * @return mixed
      */
-    public function sendSmsCode(int $codeType, string $identify) {
+    public function sendSmsCode(int $codeType, string $identify)
+    {
         return $this->loginClient->sendSmsCode($codeType, $identify);
     }
 
@@ -77,9 +75,9 @@ class InternalClient
      * @param array $userInfo
      * @return UserInfo
      */
-    public function register(string $identify, string $password, string $verifyCode, array $userInfo) :UserInfo
+    public function register(string $identify, string $password, string $verifyCode, array $userInfo): UserInfo
     {
-        return  $this->loginClient->register($identify, $password, $verifyCode, $userInfo);
+        return $this->loginClient->register($identify, $password, $verifyCode, $userInfo);
     }
 
     /**
@@ -88,17 +86,17 @@ class InternalClient
      * @param string $password
      * @return UserInfoWithJwt
      */
-    public function login(string $identify, string $password) :UserInfoWithJwt
+    public function login(string $identify, string $password): UserInfoWithJwt
     {
         $userInfo = $this->loginClient->login($identify, $password);
-        $jwt = $this->encodeJwt($userInfo);
+        $jwt      = $this->encodeJwt($userInfo);
         return new UserInfoWithJwt($userInfo, $jwt);
     }
 
     /**
      * @throws Exception|TokenExpireException
      */
-    public function verifyToken(string $jwtToken) :UserInfo
+    public function verifyToken(string $jwtToken): UserInfo
     {
         $info = $this->decodeJwt($jwtToken);
         return $this->objectToUserInfo($info);
@@ -110,7 +108,7 @@ class InternalClient
      * @param string $password
      * @return UserInfo
      */
-    public function loginByUsername(string $username, string $password) :UserInfo
+    public function loginByUsername(string $username, string $password): UserInfo
     {
         return $this->loginClient->loginByUsername($username, $password);
     }
