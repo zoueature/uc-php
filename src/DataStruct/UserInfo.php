@@ -25,11 +25,11 @@ class UserInfo
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
+            'id'        => $this->id,
             'loginType' => $this->loginType,
-            'name' => $this->name,
-            'avatar' => $this->avatar,
-            'gender' => $this->gender,
+            'name'      => $this->name,
+            'avatar'    => $this->avatar,
+            'gender'    => $this->gender,
         ];
     }
 }

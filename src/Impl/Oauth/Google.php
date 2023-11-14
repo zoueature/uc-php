@@ -26,22 +26,22 @@ class Google extends OauthLoginImpl implements OauthLogin
      * @throws UcException
      * @throws GuzzleException
      */
-    public function getInfos($tokenInfo) :OauthUserInfo
+    public function getInfos($tokenInfo): OauthUserInfo
     {
         $userInfo = $this->doHttpRequestWithJsonResp('GET', self::GET_USER_INFO_URL, [
             RequestOptions::QUERY => [
                 'access_token' => $tokenInfo,
             ]
         ]);
-        $userId = $userInfo['id'] ?? '';
-        $email = $userInfo['email'] ?? '';
-        $avatar = $userInfo['picture'] ?? '';
+        $userId   = $userInfo['id'] ?? '';
+        $email    = $userInfo['email'] ?? '';
+        $avatar   = $userInfo['picture'] ?? '';
         if (empty($userId)) {
             throw new UcException("Google login fail :" . json_encode($userInfo));
         }
         $username = '';
         if (!empty($email)) {
-            $arr = explode('@', $email);
+            $arr      = explode('@', $email);
             $username = $arr[0];
         }
         return new OauthUserInfo($userId, $username, $avatar, $email);

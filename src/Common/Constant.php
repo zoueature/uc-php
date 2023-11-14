@@ -7,11 +7,11 @@ namespace Package\Uc\Common;
 
 class Constant
 {
-    const GENDER_MALE = 1; // 男性
+    const GENDER_MALE   = 1; // 男性
     const GENDER_FEMALE = 2; // 女性
 
-    const DATA_STATUS_NORMAL = 1;  // 正常数据
-    const DATA_STATUS_DELETED = 0; // 被删除的数据
+    const DATA_STATUS_NORMAL  = 1;  // 正常数据
+    const DATA_STATUS_DELETED = 0;  // 被删除的数据
 
     private static $userDbTable = "user";
 
@@ -29,7 +29,7 @@ class Constant
      * 获取用户表名
      * @return string
      */
-    public static function getUserDbTable() :string
+    public static function getUserDbTable(): string
     {
         return static::$userDbTable;
     }

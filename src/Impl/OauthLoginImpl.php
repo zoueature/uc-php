@@ -23,7 +23,7 @@ class OauthLoginImpl
      * 获取登录类型
      * @return string
      */
-    public function getLoginType() :string
+    public function getLoginType(): string
     {
         return $this->loginType;
     }
@@ -36,7 +36,7 @@ class OauthLoginImpl
      * @return array
      * @throws GuzzleException|UcException
      */
-    protected function doHttpRequestWithJsonResp(string $method, string $uri = '', array $options = []) :array
+    protected function doHttpRequestWithJsonResp(string $method, string $uri = '', array $options = []): array
     {
         $resp = $this->httpClient->request($method, $uri, $options);
         if ($resp->getStatusCode() != 200) {

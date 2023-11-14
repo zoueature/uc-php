@@ -14,9 +14,9 @@ class OauthUserInfo
 
     public function __construct(string $userId, string $username = '', string $avatar = '', string $email = '')
     {
-        $this->userId = $userId;
+        $this->userId   = $userId;
         $this->username = $username;
-        $this->avatar = $avatar;
-        $this->email = $email;
+        $this->avatar   = $avatar;
+        $this->email    = $email;
     }
 }

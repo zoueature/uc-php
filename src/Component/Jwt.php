@@ -33,11 +33,11 @@ trait Jwt
         $this->algorithm = $algo;
     }
 
-    private function encodeJwt(UserInfo $info) :string
+    private function encodeJwt(UserInfo $info): string
     {
-        $payload = $info->toArray();
+        $payload            = $info->toArray();
         $payload['loginAt'] = time();
-        $jwt = \Firebase\JWT\JWT::encode($payload, $this->jwtKey, $this->algorithm);
+        $jwt                = \Firebase\JWT\JWT::encode($payload, $this->jwtKey, $this->algorithm);
         return $jwt;
     }
 
@@ -46,9 +46,9 @@ trait Jwt
      * @return stdClass
      * @throws TokenExpireException
      */
-    private function decodeJwt(string $token) :object
+    private function decodeJwt(string $token): object
     {
-        $info = \Firebase\JWT\JWT::decode($token, new Key($this->jwtKey, $this->algorithm));
+        $info      = \Firebase\JWT\JWT::decode($token, new Key($this->jwtKey, $this->algorithm));
         $loginTime = time() - $info->loginAt ?? 0;
         if ($loginTime > $this->ttl) {
             throw new TokenExpireException();

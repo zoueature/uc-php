@@ -5,7 +5,6 @@
 namespace Package\Uc\Exception;
 
 
-
 use Throwable;
 
 class PasswordEqualOldException extends UcException
