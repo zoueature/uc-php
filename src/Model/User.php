@@ -4,6 +4,7 @@ namespace Package\Uc\Model;
 
 use Package\Uc\Common\Constant;
 use Package\Uc\DataStruct\UserInfo;
+use Package\Uc\Exception\UserNotFoundException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 use think\Model;
@@ -28,6 +29,12 @@ use think\Model;
 
 /**
  * @property mixed $password
+ * @property mixed $id
+ * @property mixed $login_type
+ * @property mixed $identify
+ * @property mixed $nickname
+ * @property mixed $avatar
+ * @property mixed $gender
  */
 class User extends Model
 {
@@ -51,41 +58,66 @@ class User extends Model
 
     public function toUserInfo(): UserInfo
     {
-        $userInfo = new UserInfo();
-        $userInfo->id = $this->id;
+        $userInfo            = new UserInfo();
+        $userInfo->id        = $this->id;
         $userInfo->loginType = $this->login_type;
-        $userInfo->name = $this->nickname;
-        $userInfo->avatar = $this->avatar;
-        $userInfo->gender = $this->gender;
+        $userInfo->name      = $this->nickname;
+        $userInfo->avatar    = $this->avatar;
+        $userInfo->gender    = $this->gender;
         return $userInfo;
     }
 
     /**
      * getUserByIdentify 根据标识获取用户信息
-     * @throws ModelNotFoundException
-     * @throws DataNotFoundException
+     * @throws UserNotFoundException
      */
     public function getUserByIdentify(string $loginType, string $identify): User
     {
-        return $this->newQuery()
-                    ->where('login_type', '=', $loginType)
-                    ->where('identify', '=', $identify)
-                    ->where('active', '=', Constant::DATA_STATUS_NORMAL)
-                    ->findOrFail();
+        try {
+            return $this->newQuery()
+                        ->where('login_type', '=', $loginType)
+                        ->where('identify', '=', $identify)
+                        ->where('active', '=', Constant::DATA_STATUS_NORMAL)
+                        ->findOrFail();
+        } catch (DataNotFoundException|ModelNotFoundException $e) {
+            throw new UserNotFoundException();
+        }
     }
 
     /**
      * getUserByUsername 根据用户名获取用户信息
      * @param string $username
      * @return User
-     * @throws DataNotFoundException
-     * @throws ModelNotFoundException
+     * @throws UserNotFoundException
      */
     public function getUserByUsername(string $username): User
     {
-        return $this->newQuery()
-                    ->where('username', '=', $username)
-                    ->where('active', '=', Constant::DATA_STATUS_NORMAL)
-                    ->findOrFail();
+        try {
+            return $this->newQuery()
+                        ->where('username', '=', $username)
+                        ->where('active', '=', Constant::DATA_STATUS_NORMAL)
+                        ->findOrFail();
+        } catch (DataNotFoundException|ModelNotFoundException $e) {
+            throw new UserNotFoundException();
+        }
+
+    }
+
+    /**
+     * getUserById 根据主键id获取用户信息
+     * @param int $id
+     * @return User
+     * @throws UserNotFoundException
+     */
+    public function getUserById(int $id): User
+    {
+        try {
+            return $this->newQuery()
+                        ->where('id', '=', $id)
+                        ->where('active', '=', Constant::DATA_STATUS_NORMAL)
+                        ->findOrFail();
+        } catch (DataNotFoundException|ModelNotFoundException $e) {
+            throw new UserNotFoundException();
+        }
     }
 }

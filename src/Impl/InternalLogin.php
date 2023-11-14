@@ -53,12 +53,7 @@ class InternalLogin
      */
     protected function getUserByIdentify(string $identify): User
     {
-        try {
-            $user = $this->userModel->getUserByIdentify($this->loginType, $identify);
-        } catch (DataNotFoundException|ModelNotFoundException $e) {
-            throw new UserNotFoundException();
-        }
-        return $user;
+        return $this->userModel->getUserByIdentify($this->loginType, $identify);
     }
 
     /**
@@ -69,12 +64,7 @@ class InternalLogin
      */
     protected function getUserByUsername(string $username): User
     {
-        try {
-            $user = $this->userModel->getUserByUsername($username);
-        } catch (DataNotFoundException|ModelNotFoundException $e) {
-            throw new UserNotFoundException();
-        }
-        return $user;
+        return $this->userModel->getUserByUsername($username);
     }
 
     /**
@@ -161,7 +151,7 @@ class InternalLogin
         $model->nickname   = $userInfo['nickname'] ?? '';
         $model->avatar     = $userInfo['avatar'] ?? '';
         $model->gender     = $userInfo['gender'] ?? 0;
-        $ok = $model->save();
+        $ok                = $model->save();
         if (!$ok) {
             throw new UcException('create user error');
         }
@@ -199,7 +189,7 @@ class InternalLogin
      * @return bool
      * @throws UserNotFoundException|PasswordEqualOldException|PasswordNotMatchException
      */
-    public function changePasswordByOldPassword(string $identify, string $oldPassword, string $password) :bool
+    public function changePasswordByOldPassword(string $identify, string $oldPassword, string $password): bool
     {
         $user               = $this->getUserByIdentify($identify);
         $encryptOldPassword = $this->encryptPassword($oldPassword);

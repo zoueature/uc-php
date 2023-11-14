@@ -8,6 +8,7 @@ namespace Package\Uc\Impl\Oauth;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Package\Uc\Common\LoginType;
+use Package\Uc\Exception\UcException;
 use Package\Uc\Interf\ThirdLogin;
 
 class Facebook extends \Package\Uc\Impl\ThirdLogin implements ThirdLogin
@@ -22,16 +23,16 @@ class Facebook extends \Package\Uc\Impl\ThirdLogin implements ThirdLogin
     }
 
     /**
-     * @throws GuzzleException
+     * @throws GuzzleException|UcException
      */
-    private function getAccessToken(string $code) :string
+    private function getAccessToken(string $code): string
     {
-        $data = $this->doHttpRequestWithJsonResp('GET', self::GET_ACCESS_TOKEN_URL, [
+        $data        = $this->doHttpRequestWithJsonResp('GET', self::GET_ACCESS_TOKEN_URL, [
             RequestOptions::QUERY => [
-                'client_id' => '',
-                'redirect_uri' => '',
+                'client_id'     => '',
+                'redirect_uri'  => '',
                 'client_secret' => '',
-                'code' => '',
+                'code'          => '',
             ]
         ]);
         $accessToken = $data['access_token'] ?? '';
