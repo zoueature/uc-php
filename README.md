@@ -91,7 +91,7 @@ $client->login($code);
 
 * 自定义用户表名、数据库链接(默认表名为user， 连接为user_center)
   1. 自定义CustomerUser类， 继承自`Package\Uc\Model\User`
-  ```
+```
     <?php
 
     class CustomerUser extends \Package\Uc\Model\User
@@ -99,16 +99,17 @@ $client->login($code);
     protected $table = 'xxxxx';
     protected $connection = 'xxxxxx';
     }
-  ```
+```
+  
   2. 设置user类名
-  ```
+```
     Package\Uc\Config\Config::setConfig(Package\Uc\Config\ConfigOption::USER_MODEL_CLASS, CustomerUser::class);
-  ```
+```
   
 
 * 自定义第三方登录表名、数据库连接(默认表名为oauth_user, 连接为user_center)
     1. 自定义CustomerOauthUser类， 继承自`Package\Uc\Model\OauthUser`
-  ```
+```
     <?php
 
     class CustomerOauthUser extends \Package\Uc\Model\OauthUser
@@ -116,11 +117,12 @@ $client->login($code);
     protected $table = 'xxxxx';
     protected $connection = 'xxxxxx';
     }
-  ```
+```
+  
     2. 设置OauthUser类名
-  ```
+```
     Package\Uc\Config\Config::setConfig(Package\Uc\Config\ConfigOption::OAUTH_USER_MODEL_CLASS, CustomerOauthUser::class);
-  ```
+```
   
 
 * 自定义jwt token key
