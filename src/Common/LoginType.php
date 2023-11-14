@@ -9,7 +9,7 @@ use Package\Uc\Impl\Internal\EmailLoginImpl;
 use Package\Uc\Impl\Internal\MobileLoginImpl;
 use Package\Uc\Impl\Oauth\Facebook;
 use Package\Uc\Impl\Oauth\Google;
-use Package\Uc\Impl\Oauth\Twitter;
+use Package\Uc\Impl\Oauth\TikTok;
 
 class LoginType
 {
@@ -28,8 +28,7 @@ class LoginType
     const THIRD_LOGIN_TYPE = [
         self::FACEBOOK => Facebook::class,
         self::GOOGLE   => Google::class,
-        self::TWITTER  => Twitter::class,
-        self::TIKTOK,
+        self::TIKTOK   => TikTok::class,
     ];
 
 }
