@@ -19,7 +19,7 @@ class MobileLoginImpl extends InternalLoginImpl implements InternalLogin
     /**
      * @throws Exception
      */
-    public function sendSmsCode(int $codeType, string $identify)
+    public function sendSmsCode(int $codeType, string $identify): void
     {
         $verifyCode = $this->verifyCodeCli->generateVerifyCode($identify, $codeType);
         // TODO 发送短信
