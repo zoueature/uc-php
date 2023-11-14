@@ -14,9 +14,14 @@ class Google extends OauthLoginImpl implements OauthLogin
     const GET_USER_INFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 
 
-    public function getToken($code)
+    /**
+     * google 登录回调过来的就是token
+     * @param $code
+     * @return string
+     */
+    public function getToken($code): string
     {
-        // TODO: Implement getToken() method.
+        return $code;
     }
 
     /**

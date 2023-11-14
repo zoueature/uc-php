@@ -38,11 +38,11 @@ class OauthClient
      */
     public function __construct(ThirdConfig $config)
     {
+        $this->config        = $config;
         $this->loginClient   = $this->generateLoginClient($config->loginType);
         $userModelClass      = Config::getConfig(ConfigOption::USER_MODEL_CLASS);
         $oauthUserModelClass = Config::getConfig(ConfigOption::OAUTH_USER_MODEL_CLASS);
         $this->user          = new $userModelClass();
-        $this->config        = $config;
         $this->oauthUser     = new $oauthUserModelClass();
     }
 
@@ -58,7 +58,7 @@ class OauthClient
         if (empty($clientClass)) {
             throw new UndefinedLoginTypeException($loginType);
         }
-        return new $clientClass();
+        return new $clientClass($this->config);
     }
 
     /**

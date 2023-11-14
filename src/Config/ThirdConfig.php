@@ -10,6 +10,14 @@ class ThirdConfig
 
     public string $loginType;
 
+    public string $redirectURI;
+
+    public function withRedirectURI(string $redirectURI): ThirdConfig
+    {
+        $this->redirectURI = $redirectURI;
+        return $this;
+    }
+
     public function withLoginType(string $loginType): ThirdConfig
     {
         $this->loginType = $loginType;
