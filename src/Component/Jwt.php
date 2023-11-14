@@ -18,7 +18,7 @@ trait Jwt
 
     private $algorithm = 'HS256';
 
-    public function setJwyKey(string $key)
+    public function setJwtKey(string $key)
     {
         $this->jwtKey = $key;
     }

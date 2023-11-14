@@ -9,7 +9,7 @@ use Package\Uc\Common\LoginType;
 use Package\Uc\Component\Jwt;
 use Package\Uc\Config\Config;
 use Package\Uc\Config\ConfigOption;
-use Package\Uc\Config\ThirdConfig;
+use Package\Uc\Config\OauthConfig;
 use Package\Uc\DataStruct\OauthUserInfo;
 use Package\Uc\DataStruct\UserInfoWithJwt;
 use Package\Uc\Exception\LackDataException;
@@ -27,7 +27,7 @@ class OauthClient
 
     private OauthLogin $loginClient;
 
-    private ThirdConfig $config;
+    private OauthConfig $config;
 
     private User $user;
 
@@ -36,7 +36,7 @@ class OauthClient
     /**
      * @throws UndefinedLoginTypeException
      */
-    public function __construct(ThirdConfig $config)
+    public function __construct(OauthConfig $config)
     {
         $this->config        = $config;
         $this->loginClient   = $this->generateLoginClient($config->loginType);

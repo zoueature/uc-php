@@ -6,7 +6,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
-use Package\Uc\Config\ThirdConfig;
+use Package\Uc\Config\OauthConfig;
 use Package\Uc\Exception\UcException;
 
 class OauthLoginImpl
@@ -15,9 +15,9 @@ class OauthLoginImpl
 
     protected Client $httpClient;
 
-    protected ThirdConfig $config;
+    protected OauthConfig $config;
 
-    public function __construct(ThirdConfig $config)
+    public function __construct(OauthConfig $config)
     {
         $this->config     = $config;
         $this->httpClient = new Client();

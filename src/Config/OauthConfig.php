@@ -2,7 +2,7 @@
 
 namespace Package\Uc\Config;
 
-class ThirdConfig
+class OauthConfig
 {
     public string $clientId;
 
@@ -12,25 +12,25 @@ class ThirdConfig
 
     public string $redirectURI;
 
-    public function withRedirectURI(string $redirectURI): ThirdConfig
+    public function withRedirectURI(string $redirectURI): OauthConfig
     {
         $this->redirectURI = $redirectURI;
         return $this;
     }
 
-    public function withLoginType(string $loginType): ThirdConfig
+    public function withLoginType(string $loginType): OauthConfig
     {
         $this->loginType = $loginType;
         return $this;
     }
 
-    public function withClientId(string $clientId): ThirdConfig
+    public function withClientId(string $clientId): OauthConfig
     {
         $this->clientId = $clientId;
         return $this;
     }
 
-    public function withClientSecret(string $clientSecret): ThirdConfig
+    public function withClientSecret(string $clientSecret): OauthConfig
     {
         $this->clientSecret = $clientSecret;
         return $this;
