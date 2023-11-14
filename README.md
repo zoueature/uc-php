@@ -5,7 +5,7 @@
 ### TODO
 + [x] 自有账户登录相关实现
 + [ ] 短信/邮件的发送
-+ [ ] 第三方登录的相关实现
++ [x] 第三方登录的相关实现
 
 ## Quick Start 
 
@@ -35,15 +35,14 @@
 #### 自有账户相关操作
 
 ```
-// 获取数据库和缓存连接
-$dbConn = \think\facade\Db::connect();
+// 获取缓存连接， 用户验证码
 $cacheConn = \think\facade\Cache::instance();
 
 $email = "12368723@qq.com";
 $password = "1233213123123";
 
 // 实例化客户端
-$internalUcClient = new \Package\Uc\InternalClient\InternalClient(\Package\Uc\LoginType\LoginType::EMAIL, $dbConn, $cacheConn);
+$internalUcClient = new \Package\Uc\InternalClient\InternalClient(\Package\Uc\LoginType\LoginType::EMAIL, $cacheConn);
 
 
 // 发送验证码
@@ -72,16 +71,62 @@ $internalUcClient->changePasswordByOldPassword($email, $password.'123', $passwor
 
 ```
 
+#### 第三方登录相关操作
+```
+// 初始化客户端
+$client = new OauthClient(
+    (new OauthConfig())
+        ->withLoginType(LoginType::FACEBOOK)
+        ->withClientId('327489453789423')
+        ->withClientSecret('687790709afbc789a0980f800af9')
+        ->withRedirectURI('https://www.test.com')
+);
+
+// code 为客户端传过来的参数值
+$client->login($code);
+
+```
+
 #### 其他配置项
-* 自定义用户表名(默认为user)
-```
-\Package\Uc\Constant::setUserDbTable('user_table');
-```
+
+* 自定义用户表名、数据库链接(默认表名为user， 连接为user_center)
+  1. 自定义CustomerUser类， 继承自`Package\Uc\Model\User`
+  ```
+    <?php
+
+    class CustomerUser extends \Package\Uc\Model\User
+    {
+    protected $table = 'xxxxx';
+    protected $connection = 'xxxxxx';
+    }
+  ```
+  2. 设置user类名
+  ```
+    Package\Uc\Config\Config::setConfig(Package\Uc\Config\ConfigOption::USER_MODEL_CLASS, CustomerUser::class);
+  ```
+  
+
+* 自定义第三方登录表名、数据库连接(默认表名为oauth_user, 连接为user_center)
+    1. 自定义CustomerOauthUser类， 继承自`Package\Uc\Model\OauthUser`
+  ```
+    <?php
+
+    class CustomerOauthUser extends \Package\Uc\Model\OauthUser
+    {
+    protected $table = 'xxxxx';
+    protected $connection = 'xxxxxx';
+    }
+  ```
+    2. 设置OauthUser类名
+  ```
+    Package\Uc\Config\Config::setConfig(Package\Uc\Config\ConfigOption::OAUTH_USER_MODEL_CLASS, CustomerOauthUser::class);
+  ```
+  
 
 * 自定义jwt token key
 ```
 $internalUcClient = new \Package\Uc\InternalClient(LoginType::EMAIL, $dbConn, $cacheConn);
-$internalUcClient->setJwyKey('the new key');
+$internalUcClient->setJwtKey('the new key');
 ```
 
 * 自定义token国企时间(默认为7天)
@@ -99,5 +144,5 @@ $internalUcClient->setAlgo('HS384');
 
 ## 扩展维护
 
-1. 扩展自有账户登录方式， 在`src/Impl`下新建`XxxxLogin`, 实现接口`\Package\Uc\Interf\InternalLogin`
-2. 扩展第三方登录方式， 在`src/Impl`下新建`XxxxLogin`, 实现接口`\Package\Uc\Interf\ThirdLogin`
+1. 扩展自有账户登录方式， 在`src/Impl/Internal`下新建`XxxxLoginImpl`, 实现接口`\Package\Uc\Interf\InternalLogin`
+2. 扩展第三方登录方式， 在`src/Impl/Oauth`下新建`Xxxx`, 实现接口`\Package\Uc\Interf\OauthLogin`

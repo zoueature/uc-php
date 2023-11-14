@@ -7,7 +7,7 @@ namespace Package\Uc\Exception;
 
 use Throwable;
 
-class VerifyCodeNotMatchException extends \Exception
+class VerifyCodeNotMatchException extends UcException
 {
     public function __construct($message = "verify code not match", $code = Errcode::ERR_VERIFY_CODE_NOT_MATCH, Throwable $previous = null)
     {

@@ -5,10 +5,9 @@
 namespace Package\Uc\Exception;
 
 
-
 use Throwable;
 
-class PasswordNotMatchException extends \Exception
+class PasswordNotMatchException extends UcException
 {
     public function __construct($message = "password not match", $code = Errcode::ERR_PASSWORD_NOT_MATCH, Throwable $previous = null)
     {

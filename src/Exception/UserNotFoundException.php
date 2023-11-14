@@ -5,13 +5,12 @@
 namespace Package\Uc\Exception;
 
 
-
 use Throwable;
 
-class UserNotFoundException extends \Exception
+class UserNotFoundException extends UcException
 {
-    public function __construct($message = "user not found", $code = Errcode::ERR_USER_NOTFOUND, Throwable $previous = null)
+    public function __construct($message = "", $code = Errcode::ERR_USER_NOTFOUND, Throwable $previous = null)
     {
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message . ' user not found', $code, $previous);
     }
 }

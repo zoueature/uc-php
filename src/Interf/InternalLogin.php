@@ -10,19 +10,19 @@ use Package\Uc\DataStruct\UserInfo;
 interface InternalLogin
 {
     // getLoginType 获取登录类型
-    public function getLoginType() :string;
+    public function getLoginType(): string;
 
     // sendSmsCode 发送验证码
     public function sendSmsCode(int $codeType, string $identify);
 
     // register 注册用户
-    public function register(string $identify, string $password, string $verifyCode, array $userInfo) :UserInfo;
+    public function register(string $identify, string $password, string $verifyCode, array $userInfo): UserInfo;
 
     // login 用户登录
-    public function login(string $identify, string $password) :UserInfo;
+    public function login(string $identify, string $password): UserInfo;
 
     // login 用户登录
-    public function loginByUsername(string $username, string $password) :UserInfo;
+    public function loginByUsername(string $username, string $password): UserInfo;
 
     // changePassword 忘记密码密码修改
     public function changePassword(string $identify, string $verifyCode, string $password);

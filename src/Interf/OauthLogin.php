@@ -5,14 +5,16 @@
 namespace Package\Uc\Interf;
 
 
-interface ThirdLogin
+use Package\Uc\DataStruct\OauthUserInfo;
+
+interface OauthLogin
 {
-    public function getLoginType() :string;
+    public function getLoginType(): string;
 
     # 获取token和openid
     public function getToken($code);
 
     # 获取nickname等用户信息
-    public function getInfos($tokenInfo);
+    public function getInfos($tokenInfo): OauthUserInfo;
 
 }
