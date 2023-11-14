@@ -8,6 +8,7 @@ namespace Package\Uc\Impl\Internal;
 use Package\Uc\Common\LoginType;
 use Package\Uc\Config\Config;
 use Package\Uc\Config\ConfigOption;
+use Package\Uc\Exception\ErrIdentifyFormatException;
 use Package\Uc\Impl\InternalLoginImpl;
 use Package\Uc\Interf\InternalLogin;
 use Symfony\Component\Mailer\Mailer;
@@ -46,4 +47,18 @@ class EmailLoginImpl extends InternalLoginImpl implements InternalLogin
     }
 
 
+    /**
+     * 检查是否符合邮件格式
+     * @param string $identify
+     * @return bool
+     * @throws ErrIdentifyFormatException
+     */
+    public function checkIdentifyFormat(string $identify): bool
+    {
+        $ok = boolval(preg_match('/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/', $identify));
+        if (!$ok) {
+            throw new ErrIdentifyFormatException('Email');
+        }
+        return $ok;
+    }
 }

@@ -64,6 +64,7 @@ class InternalClient
      */
     public function sendSmsCode(int $codeType, string $identify)
     {
+        $this->loginClient->checkIdentifyFormat($identify);
         return $this->loginClient->sendSmsCode($codeType, $identify);
     }
 
@@ -77,6 +78,7 @@ class InternalClient
      */
     public function register(string $identify, string $password, string $verifyCode, array $userInfo): UserInfo
     {
+        $this->loginClient->checkIdentifyFormat($identify);
         return $this->loginClient->register($identify, $password, $verifyCode, $userInfo);
     }
 
@@ -88,6 +90,7 @@ class InternalClient
      */
     public function login(string $identify, string $password): UserInfoWithJwt
     {
+        $this->loginClient->checkIdentifyFormat($identify);
         $userInfo = $this->loginClient->login($identify, $password);
         $jwt      = $this->encodeJwt($userInfo);
         return new UserInfoWithJwt($userInfo, $jwt);
