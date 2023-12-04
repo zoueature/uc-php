@@ -16,7 +16,7 @@
     "repositories": {
         "package/uc": {
             "type": "git",
-            "url": "git@16.163.83.112:package/uc.git"
+            "url": "git@gitlab.jiebu.com:php-package/uc.git"
         }
     }
     
