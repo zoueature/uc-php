@@ -16,7 +16,7 @@
     "repositories": {
         "package/uc": {
             "type": "git",
-            "url": "git@gitlab.jiebu.com:php-package/uc.git"
+            "url": "https://github.com/zoueature/uc-php.git"
         }
     }
     
